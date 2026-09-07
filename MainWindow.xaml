@@ -5,8 +5,104 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WinClient"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Win Client" Height="450" Width="800">
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="15*" />
+            <ColumnDefinition Width="65*" />
+            <ColumnDefinition Width="20*" />
+        </Grid.ColumnDefinitions>
 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="30" />
+            <RowDefinition />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="30" />
+            <RowDefinition />
+            <RowDefinition Height="10" />
+            <RowDefinition Height="45" />
+        </Grid.RowDefinitions>
+
+        <!--  Status Indicator  -->
+        
+        <Label Grid.Row="0" Grid.Column="2" Content="Unregistered" BorderBrush="Black" BorderThickness="1" 
+               VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="Red" 
+               Foreground="White" FontWeight="Bold"/>
+        
+        <!--  Registration Controls  -->
+        
+        <Label Grid.Row="2" Grid.Column="0" Content="Registration" VerticalContentAlignment="Center" />
+        <Border Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="1" >
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="15*" />
+                    <ColumnDefinition Width="85*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                
+                <!--  Explanation Label  -->
+
+                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalContentAlignment="Center"
+                       Content="You must register an account before you can log in.  Click the button below to register an account." />
+
+                <!--  Register Button  -->
+                
+                <Button Grid.Row="1" Grid.Column="0" Content="Register" Click="RegisterButton_Click"/>
+                
+                <!--  Success Label  -->
+                
+                <Label Grid.Row="1" Grid.Column="1" Content="" Visibility="Collapsed" />
+                
+                <!--  Error Label  -->
+                
+                <Label Grid.Row="1" Grid.Column="1" Content="" Visibility="Collapsed" Foreground="Red" />
+            </Grid>
+        </Border>
+
+        <!--  Login Controls  -->
+
+        <Label Grid.Row="5" Grid.Column="0" Content="Log In" VerticalContentAlignment="Center" 
+               IsEnabled="False" />
+        <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="1"
+                IsEnabled="False">
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="15*" />
+                    <ColumnDefinition Width="85*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+
+                <!--  Explanation Label  -->
+
+                <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalContentAlignment="Center"
+                       Content="Log in to the server with the provided user ID by clicking the Login button below." />
+
+                <!--  Login Button  -->
+
+                <Button Grid.Row="1" Grid.Column="0" Content="Login" Click="LoginButton_Click"/>
+
+                <!--  Success Label  -->
+
+                <Label Grid.Row="1" Grid.Column="1" Content="" Visibility="Collapsed" />
+
+                <!--  Error Label  -->
+
+                <Label Grid.Row="1" Grid.Column="1" Content="" Visibility="Collapsed" Foreground="Red" />
+            </Grid>
+        </Border>
+        
+        <!--  Exit Button -->
+        
+        <Button Grid.Row="8" Grid.Column="2" Content="Exit" Click="ExitButton_Click"/>
     </Grid>
 </Window>
