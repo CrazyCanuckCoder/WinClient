@@ -4,8 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WinClient"
+        xmlns:conv="clr-namespace:WinClient.Converters"
         mc:Ignorable="d"
         Title="Win Client" Height="450" Width="800">
+    
+    <Window.Resources>
+        <conv:StatusToTextConverter x:Key="StatusToTextConverter" />
+    </Window.Resources>
+    
     <Grid Margin="20">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="15*" />
@@ -27,9 +33,30 @@
 
         <!--  Status Indicator  -->
         
-        <Label Grid.Row="0" Grid.Column="2" Content="Unregistered" BorderBrush="Black" BorderThickness="1" 
-               VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Background="Red" 
-               Foreground="White" FontWeight="Bold"/>
+        <Label Grid.Row="0" Grid.Column="2"
+               Content="{Binding Status, Converter={StaticResource StatusToTextConverter}}"
+               BorderBrush="Black" BorderThickness="1"
+               VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+               FontWeight="Bold" Foreground="White">
+            <Label.Style>
+                <Style TargetType="Label">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Status}" Value="Unregistered">
+                            <Setter Property="Background" Value="Red" />
+                            <Setter Property="Foreground" Value="White" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="Registered">
+                            <Setter Property="Background" Value="Black" />
+                            <Setter Property="Foreground" Value="White" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="LoggedIn">
+                            <Setter Property="Background" Value="Green" />
+                            <Setter Property="Foreground" Value="White" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Label.Style>
+        </Label>
         
         <!--  Registration Controls  -->
         
@@ -52,25 +79,29 @@
                        Content="You must register an account before you can log in.  Click the button below to register an account." />
 
                 <!--  Register Button  -->
-                
-                <Button Grid.Row="1" Grid.Column="0" Content="Register" Click="RegisterButton_Click"/>
+
+                <Button Grid.Row="1" Grid.Column="0" Content="Register" Click="RegisterButton_ClickAsync"
+                        IsEnabled="{Binding RegisterButtonIsEnabled}" />
                 
                 <!--  Success Label  -->
                 
-                <Label Grid.Row="1" Grid.Column="1" Content="" Visibility="Collapsed" />
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding RegisterText}" 
+                       VerticalContentAlignment="Center" Visibility="{Binding RegisterTextVisibility}" />
                 
                 <!--  Error Label  -->
                 
-                <Label Grid.Row="1" Grid.Column="1" Content="" Visibility="Collapsed" Foreground="Red" />
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding RegisterError}" 
+                       VerticalContentAlignment="Center" Visibility="{Binding RegisterErrorVisibility}" 
+                       Foreground="Red" />
             </Grid>
         </Border>
 
         <!--  Login Controls  -->
 
         <Label Grid.Row="5" Grid.Column="0" Content="Log In" VerticalContentAlignment="Center" 
-               IsEnabled="False" />
+               IsEnabled="{Binding LoginControlsAreEnabled}" />
         <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="1"
-                IsEnabled="False">
+                IsEnabled="{Binding LoginControlsAreEnabled}">
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="15*" />
