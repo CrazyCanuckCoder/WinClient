@@ -13,8 +13,18 @@ public partial class MainWindow : Window
         DataContext = this;
     }
 
+    #region Fields
+    /// <summary>
+    /// The client used to communicate with the server API for registration and login.
+    /// </summary>
     private readonly ServerApiClient _serverApiClient = new();
+
+    /// <summary>
+    /// The user ID obtained after a successful registration, used for login.
+    /// </summary>
     private string _userID = string.Empty;
+
+    #endregion Fields
 
     #region Dependency Properties
 
@@ -35,8 +45,8 @@ public partial class MainWindow : Window
     /// <summary>
     /// Using a DependencyProperty as the backing store for LoginControlsAreEnabled.
     /// </summary>
-    public static readonly DependencyProperty LoginControlsAreEnabledProperty =
-        DependencyProperty.Register(nameof(LoginControlsAreEnabled), typeof(bool), typeof(MainWindow),
+    public static readonly DependencyProperty LoginButtonIsEnabledProperty =
+        DependencyProperty.Register(nameof(LoginButtonIsEnabled), typeof(bool), typeof(MainWindow),
             new PropertyMetadata(false));
 
     /// <summary>
@@ -67,8 +77,37 @@ public partial class MainWindow : Window
         DependencyProperty.Register(nameof(RegisterText), typeof(string), typeof(MainWindow),
             new PropertyMetadata(string.Empty));
 
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for LoginErrorVisibility.
+    /// </summary>
+    public static readonly DependencyProperty LoginErrorVisibilityProperty =
+        DependencyProperty.Register(nameof(LoginErrorVisibility), typeof(Visibility), typeof(MainWindow),
+            new PropertyMetadata(Visibility.Collapsed));
+
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for LoginError.
+    /// </summary>
+    public static readonly DependencyProperty LoginErrorProperty =
+        DependencyProperty.Register(nameof(LoginError), typeof(string), typeof(MainWindow),
+            new PropertyMetadata(string.Empty));
+
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for LoginTextVisibility.
+    /// </summary>
+    public static readonly DependencyProperty LoginTextVisibilityProperty =
+        DependencyProperty.Register(nameof(LoginTextVisibility), typeof(Visibility), typeof(MainWindow),
+            new PropertyMetadata(Visibility.Collapsed));
+
+    /// <summary>
+    /// Using a DependencyProperty as the backing store for LoginText.
+    /// </summary>
+    public static readonly DependencyProperty LoginTextProperty =
+        DependencyProperty.Register(nameof(LoginText), typeof(string), typeof(MainWindow),
+            new PropertyMetadata(string.Empty));
+
     #endregion Dependency Properties
 
+    #region Properties
 
     /// <summary>
     /// Indicates the current status of the registration / login process.
@@ -91,10 +130,10 @@ public partial class MainWindow : Window
     /// <summary>
     /// True if the Login controls are enabled; false otherwise.
     /// </summary>
-    public bool LoginControlsAreEnabled
+    public bool LoginButtonIsEnabled
     {
-        get => (bool)GetValue(LoginControlsAreEnabledProperty);
-        set => SetValue(LoginControlsAreEnabledProperty, value);
+        get => (bool)GetValue(LoginButtonIsEnabledProperty);
+        set => SetValue(LoginButtonIsEnabledProperty, value);
     }
 
     /// <summary>
@@ -133,6 +172,46 @@ public partial class MainWindow : Window
         set => SetValue(RegisterTextProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the visibility of the login error message.
+    /// </summary>
+    public Visibility LoginErrorVisibility
+    {
+        get => (Visibility)GetValue(LoginErrorVisibilityProperty);
+        set => SetValue(LoginErrorVisibilityProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the error message to display when login fails.
+    /// </summary>
+    public string LoginError
+    {
+        get => (string)GetValue(LoginErrorProperty);
+        set => SetValue(LoginErrorProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the visibility of the login success message.
+    /// </summary>
+    public Visibility LoginTextVisibility
+    {
+        get => (Visibility)GetValue(LoginTextVisibilityProperty);
+        set => SetValue(LoginTextVisibilityProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the success message to display when login succeeds.
+    /// </summary>
+    public string LoginText
+    {
+        get => (string)GetValue(LoginTextProperty);
+        set => SetValue(LoginTextProperty, value);
+    }
+
+    #endregion Properties
+
+
+    #region Methods
 
     /// <summary>
     /// Clears the registration success and error messages, and hides their visibility.
@@ -143,6 +222,17 @@ public partial class MainWindow : Window
         RegisterError = string.Empty;
         RegisterTextVisibility = Visibility.Collapsed;
         RegisterErrorVisibility = Visibility.Collapsed;
+    }
+
+    /// <summary>
+    /// Clears the login success and error messages, and hides their visibility.
+    /// </summary>
+    private void ClearLoginTexts()
+    {
+        LoginText = string.Empty;
+        LoginError = string.Empty;
+        LoginTextVisibility = Visibility.Collapsed;
+        LoginErrorVisibility = Visibility.Collapsed;
     }
 
     /// <summary>
@@ -158,6 +248,18 @@ public partial class MainWindow : Window
     }
 
     /// <summary>
+    /// Updates the UI to show a login error message and re-enables the login controls.
+    /// </summary>
+    /// <param name="message">The error message to display.</param>
+    private void UpdateLoginError(string message)
+    {
+        LoginButtonIsEnabled = true;
+        LoginError = message;
+        LoginErrorVisibility = Visibility.Visible;
+        LoginTextVisibility = Visibility.Collapsed;
+    }
+
+    /// <summary>
     /// Updates the UI to show a registration success message and hides the error message.
     /// </summary>
     /// <param name="successText">The success message to display.</param>
@@ -166,6 +268,47 @@ public partial class MainWindow : Window
         RegisterText = successText;
         RegisterTextVisibility = Visibility.Visible;
         RegisterErrorVisibility = Visibility.Collapsed;
+    }
+
+    /// <summary>
+    /// Updates the UI to show a login success message and hides the error message.
+    /// </summary>
+    /// <param name="message">The success message to display.</param>
+    private void UpdateLoginText(string message)
+    {
+        LoginText = message;
+        LoginTextVisibility = Visibility.Visible;
+        LoginErrorVisibility = Visibility.Collapsed;
+    }
+
+    /// <summary>
+    /// Handles the change of the ClientStatus property and updates the UI accordingly.
+    /// </summary>
+    /// <param name="newStatus">The new status value.</param>
+    private void OnStatusChanged(ClientStatus newStatus)
+    {
+        Status = newStatus;
+
+        switch (newStatus)
+        {
+            case ClientStatus.Unregistered:
+                RegisterButtonIsEnabled = true;
+                LoginButtonIsEnabled = false;
+                break;
+
+            case ClientStatus.Registered:
+                RegisterButtonIsEnabled = false;
+                LoginButtonIsEnabled = true;
+                break;
+
+            case ClientStatus.LoggedIn:
+                RegisterButtonIsEnabled = true;
+                LoginButtonIsEnabled = false;
+                break;
+
+            default:
+                throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, null);
+        }
     }
 
     /// <summary>
@@ -199,35 +342,9 @@ public partial class MainWindow : Window
         }
     }
 
-    /// <summary>
-    /// Handles the change of the ClientStatus property and updates the UI accordingly.
-    /// </summary>
-    /// <param name="newStatus">The new status value.</param>
-    private void OnStatusChanged(ClientStatus newStatus)
-    {
-        Status = newStatus;
-        
-        switch (newStatus)
-        {
-            case ClientStatus.Unregistered:
-                RegisterButtonIsEnabled = true;
-                LoginControlsAreEnabled = false;
-                break;
+    #endregion Methods
 
-            case ClientStatus.Registered:
-                RegisterButtonIsEnabled = false;
-                LoginControlsAreEnabled = true;
-                break;
-
-            case ClientStatus.LoggedIn:
-                RegisterButtonIsEnabled = true;
-                LoginControlsAreEnabled = false;
-                break;
-
-            default:
-                throw new ArgumentOutOfRangeException(nameof(newStatus), newStatus, null);
-        }
-    }   
+    #region Event Handlers
 
     private async void RegisterButton_ClickAsync(object sender, RoutedEventArgs e)
     {
@@ -261,13 +378,41 @@ public partial class MainWindow : Window
         }
     }
 
-    private void LoginButton_Click(object sender, RoutedEventArgs e)
+    private async void LoginButton_ClickAsync(object sender, RoutedEventArgs e)
     {
-        OnStatusChanged(ClientStatus.LoggedIn);
+        try
+        {
+            LoginButtonIsEnabled = false;
+            ClearLoginTexts();
+            var result = await _serverApiClient.LoginAsync(_userID);
+            if (result)
+            {
+                UpdateLoginText("Login successful.");
+                OnStatusChanged(ClientStatus.LoggedIn);
+            }
+            else
+            {
+                UpdateLoginError("Login failed.");
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            UpdateLoginError("Login was canceled.");
+        }
+        catch (ServerApiException saException)
+        {
+            UpdateLoginError(saException.Message);
+        }
+        catch (Exception ex)
+        {
+            UpdateLoginError($"An unexpected error occurred: {ex.Message}");
+        }
     }
 
     private void ExitButton_Click(object sender, RoutedEventArgs e)
     {
         Close();
     }
+
+    #endregion Event Handlers
 }

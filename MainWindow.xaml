@@ -98,10 +98,8 @@
 
         <!--  Login Controls  -->
 
-        <Label Grid.Row="5" Grid.Column="0" Content="Log In" VerticalContentAlignment="Center" 
-               IsEnabled="{Binding LoginControlsAreEnabled}" />
-        <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="1"
-                IsEnabled="{Binding LoginControlsAreEnabled}">
+        <Label Grid.Row="5" Grid.Column="0" Content="Log In" VerticalContentAlignment="Center" />
+        <Border Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" BorderBrush="Black" BorderThickness="1">
             <Grid Margin="10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="15*" />
@@ -120,15 +118,19 @@
 
                 <!--  Login Button  -->
 
-                <Button Grid.Row="1" Grid.Column="0" Content="Login" Click="LoginButton_Click"/>
+                <Button Grid.Row="1" Grid.Column="0" Content="Login" Click="LoginButton_ClickAsync"
+                        IsEnabled="{Binding LoginButtonIsEnabled}" />
 
                 <!--  Success Label  -->
 
-                <Label Grid.Row="1" Grid.Column="1" Content="" Visibility="Collapsed" />
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding LoginText}" 
+                       Visibility="{Binding LoginTextVisibility}" VerticalContentAlignment="Center" />
 
                 <!--  Error Label  -->
 
-                <Label Grid.Row="1" Grid.Column="1" Content="" Visibility="Collapsed" Foreground="Red" />
+                <Label Grid.Row="1" Grid.Column="1" Content="{Binding LoginError}" 
+                       Visibility="{Binding LoginErrorVisibility}" Foreground="Red" 
+                       VerticalContentAlignment="Center" />
             </Grid>
         </Border>
         

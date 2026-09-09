@@ -41,17 +41,16 @@ public sealed class ServerApiClient : IDisposable
         try
         {
             var url = new Uri(new Uri(_baseAddress), "/register");
-            using var response = await _httpClient.PostAsJsonAsync(url, payload, cancellationToken)
-                .ConfigureAwait(false);
+            using var response = await _httpClient.PostAsJsonAsync(url, payload, cancellationToken);
 
             if (!response.IsSuccessStatusCode)
             {
-                var body = await SafeReadContentAsync(response).ConfigureAwait(false);
+                var body = await SafeReadContentAsync(response);
                 throw new ServerApiException(
                     $"Register request failed: {(int)response.StatusCode} {response.ReasonPhrase}. Body: {body}");
             }
 
-            var content = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+            var content = await response.Content.ReadAsStringAsync(cancellationToken);
             if (string.IsNullOrWhiteSpace(content))
                 throw new ServerApiException("Register response was empty.");
 
@@ -113,14 +112,13 @@ public sealed class ServerApiClient : IDisposable
             var uriBuilder = new UriBuilder(_baseAddress)
             {
                 Path = "/login",
-                Query = $"id={Uri.EscapeDataString(userId)}"
+                Query = $"user_id={Uri.EscapeDataString(userId)}"
             };
 
-            using var response = await _httpClient.GetAsync(uriBuilder.Uri, cancellationToken)
-                .ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync(uriBuilder.Uri, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
-                var body = await SafeReadContentAsync(response).ConfigureAwait(false);
+                var body = await SafeReadContentAsync(response);
                 throw new ServerApiException(
                     $"Login request failed: {(int)response.StatusCode} {response.ReasonPhrase}. Body: {body}");
             }
@@ -145,7 +143,7 @@ public sealed class ServerApiClient : IDisposable
     {
         try
         {
-            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return await response.Content.ReadAsStringAsync();
         }
         catch
         {
