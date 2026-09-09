@@ -36,7 +36,8 @@ public class ServerApiClientTests
         }));
 
         using var api = new ServerApiClient(client);
-        var id = await api.RegisterAsync(new { username = "u" });
+        var returnVal = await api.RegisterAsync(new { username = "u" });
+        string id = returnVal[(returnVal.IndexOf(':') + 1)..].Trim('"', '}');
         Assert.That(id, Is.EqualTo("abc123"));
     }
 
