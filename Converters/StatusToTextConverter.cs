@@ -15,6 +15,8 @@ public class StatusToTextConverter : IValueConverter
                 ClientStatus.Unregistered => "Unregistered",
                 ClientStatus.Registered => "Registered",
                 ClientStatus.LoggedIn => "Logged In",
+                ClientStatus.Registering => "Registering...",
+                ClientStatus.LoggingIn => "Logging In...",
                 _ => "Unknown",
             };
         }

@@ -8,4 +8,6 @@ public enum ClientStatus
     Unregistered,
     Registered,
     LoggedIn,
+    Registering,
+    LoggingIn,
 }

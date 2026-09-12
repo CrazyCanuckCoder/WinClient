@@ -37,7 +37,7 @@
                Content="{Binding Status, Converter={StaticResource StatusToTextConverter}}"
                BorderBrush="Black" BorderThickness="1"
                VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
-               FontWeight="Bold" Foreground="White">
+               FontWeight="Bold">
             <Label.Style>
                 <Style TargetType="Label">
                     <Style.Triggers>
@@ -49,9 +49,17 @@
                             <Setter Property="Background" Value="Black" />
                             <Setter Property="Foreground" Value="White" />
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="Registering">
+                            <Setter Property="Background" Value="Yellow" />
+                            <Setter Property="Foreground" Value="Black" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding Status}" Value="LoggedIn">
                             <Setter Property="Background" Value="Green" />
                             <Setter Property="Foreground" Value="White" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding Status}" Value="LoggingIn">
+                            <Setter Property="Background" Value="Yellow" />
+                            <Setter Property="Foreground" Value="Black" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

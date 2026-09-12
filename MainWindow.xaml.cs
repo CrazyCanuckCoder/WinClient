@@ -294,17 +294,25 @@ public partial class MainWindow : Window
             case ClientStatus.Unregistered:
                 RegisterButtonIsEnabled = true;
                 LoginButtonIsEnabled = false;
-                ClearRegisterTexts();
                 break;
 
             case ClientStatus.Registered:
                 RegisterButtonIsEnabled = false;
                 LoginButtonIsEnabled = true;
-                ClearLoginTexts();
                 break;
 
             case ClientStatus.LoggedIn:
                 RegisterButtonIsEnabled = true;
+                LoginButtonIsEnabled = false;
+                break;
+
+            case ClientStatus.Registering:
+                RegisterButtonIsEnabled = false;
+                LoginButtonIsEnabled = false;
+                break;
+
+            case ClientStatus.LoggingIn:
+                RegisterButtonIsEnabled = false;
                 LoginButtonIsEnabled = false;
                 break;
 
@@ -352,7 +360,7 @@ public partial class MainWindow : Window
     {
         try
         {
-            OnStatusChanged(ClientStatus.Unregistered);
+            OnStatusChanged(ClientStatus.Registering);
             RegisterButtonIsEnabled = false;
             ClearRegisterTexts();
             string result = await _serverApiClient.RegisterAsync("");
@@ -364,19 +372,23 @@ public partial class MainWindow : Window
             else
             {
                 UpdateRegisterError(errorText);
+                OnStatusChanged(ClientStatus.Unregistered);
             }
         }
         catch (OperationCanceledException)
         {
             UpdateRegisterError("Registration was canceled.");
+            OnStatusChanged(ClientStatus.Unregistered);
         }
         catch (ServerApiException saException)
         {
             UpdateRegisterError(saException.Message);
+            OnStatusChanged(ClientStatus.Unregistered);
         }
         catch (Exception ex)
         {
             UpdateRegisterError($"An unexpected error occurred: {ex.Message}");
+            OnStatusChanged(ClientStatus.Unregistered);
         }
     }
 
@@ -384,6 +396,7 @@ public partial class MainWindow : Window
     {
         try
         {
+            OnStatusChanged(ClientStatus.LoggingIn);
             LoginButtonIsEnabled = false;
             ClearLoginTexts();
             var result = await _serverApiClient.LoginAsync(_userID);
@@ -395,11 +408,13 @@ public partial class MainWindow : Window
             else
             {
                 UpdateLoginError("Login failed.");
+                OnStatusChanged(ClientStatus.Registered);
             }
         }
         catch (OperationCanceledException)
         {
             UpdateLoginError("Login was canceled.");
+            OnStatusChanged(ClientStatus.Registered);
         }
         catch (ServerApiException saException)
         {
@@ -412,11 +427,13 @@ public partial class MainWindow : Window
             else
             {
                 UpdateLoginError(saException.Message);
+                OnStatusChanged(ClientStatus.Registered);
             }
         }
         catch (Exception ex)
         {
             UpdateLoginError($"An unexpected error occurred: {ex.Message}");
+            OnStatusChanged(ClientStatus.Registered);
         }
     }
 
