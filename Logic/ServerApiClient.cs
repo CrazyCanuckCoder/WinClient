@@ -115,7 +115,7 @@ public sealed class ServerApiClient : IDisposable
                 Query = $"user_id={Uri.EscapeDataString(userId)}"
             };
 
-            using var response = await _httpClient.GetAsync(uriBuilder.Uri, cancellationToken);
+            using var response = await _httpClient.PostAsync(uriBuilder.Uri, null, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
                 var body = await SafeReadContentAsync(response);
