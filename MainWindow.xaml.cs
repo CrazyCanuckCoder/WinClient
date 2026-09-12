@@ -294,11 +294,13 @@ public partial class MainWindow : Window
             case ClientStatus.Unregistered:
                 RegisterButtonIsEnabled = true;
                 LoginButtonIsEnabled = false;
+                ClearRegisterTexts();
                 break;
 
             case ClientStatus.Registered:
                 RegisterButtonIsEnabled = false;
                 LoginButtonIsEnabled = true;
+                ClearLoginTexts();
                 break;
 
             case ClientStatus.LoggedIn:
@@ -401,7 +403,16 @@ public partial class MainWindow : Window
         }
         catch (ServerApiException saException)
         {
-            UpdateLoginError(saException.Message);
+            if (saException.Message.Contains("user not found"))
+            {
+                // Invalid user ID, reset to unregistered state.
+                UpdateLoginError("Login failed: user not found. Please register again.");
+                OnStatusChanged(ClientStatus.Unregistered);
+            }
+            else
+            {
+                UpdateLoginError(saException.Message);
+            }
         }
         catch (Exception ex)
         {
