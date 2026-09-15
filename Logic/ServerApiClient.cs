@@ -60,8 +60,7 @@ public sealed class ServerApiClient : IDisposable
                 using var doc = JsonDocument.Parse(content);
                 if (doc.RootElement.ValueKind == JsonValueKind.Object)
                 {
-                    if (doc.RootElement.TryGetProperty("user_id", out var idProp) && 
-                        idProp.ValueKind == JsonValueKind.String)
+                    if (doc.RootElement.TryGetProperty("user_id", out var idProp))
                     {
                         return idProp.GetString()!;
                     }
